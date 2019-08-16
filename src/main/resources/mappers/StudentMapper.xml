@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.dao.StudentDao">
+
+
+    <resultMap id="studentResult" type="Student">
+        <id property="studentid" column="studentid"/>
+        <result property="userid" column="userid"/>
+        <result property="tel" column="tel"/>
+        <result property="courseid" column="courseid"/>
+        <result property="teacherid" column="teacherid"/>
+        <result property="score" column="score"/>
+        <association property="course" javaType="Course">
+            <id property="courseid" column="courseid"/>
+            <result property="coursename" column="coursename"/>
+            <result property="comment" column="comment"/>
+        </association>
+        <association property="teacher" javaType="Teacher">
+            <id property="teacherid" column="teacherid"/>
+            <result property="userid" column="userid"/>
+            <association property="userLogin" javaType="UserLogin">
+                <id property="userid" column="userid"/>
+                <result property="name" column="name"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <!--获得登录的学生所选择的课程，教师和相应成绩-->
+    <select id="studentGetPersonalMessage" parameterType="Map" resultMap="studentResult">
+         select s.tel,s.score,c.coursename,u.name
+          from student s,course c,teacher t,userlogin u
+          where s.courseid=c.courseid and s.teacherid=t.teacherid
+          and t.userid=u.userid and s.userid=#{userid}
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+    <!--获取上一个方法的总的条数-->
+    <select id="studentGetPersonalMessageTotal" parameterType="Map" resultType="Long">
+        select count(*) from ( select s.tel,s.score,c.coursename,u.name
+          from student s,course c,teacher t,userlogin u
+          where s.courseid=c.courseid and s.teacherid=t.teacherid
+          and t.userid=u.userid and s.userid=#{userid}) A
+    </select>
+
+
+
+    <!--课程列表-->
+    <select id="courseList" parameterType="Map" resultType="Course">
+        select * from course where courseid!=1
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+    <!--课程列表总数-->
+    <select id="courseListTotal" parameterType="Map" resultType="Long">
+        select count(*) from course where courseid!=1
+    </select>
+
+    <!--录入选课时，根据userid获取学生的电话号码-->
+    <select id="selectTel" parameterType="int" resultType="Student">
+        select * from student where userid=#{userid}
+    </select>
+
+    <!--录入选课时，根据courseid获取相关老师的teacherid-->
+    <select id="selectTeacher" parameterType="int" resultType="Teacher">
+        select * from teacher where courseid=#{courseid}
+    </select>
+
+    <!--学生选课-->
+    <insert id="addScore" parameterType="Student">
+        insert into student(userid,tel,courseid,teacherid) values(#{userid},#{tel},#{courseid},#{teacherid})
+    </insert>
+
+    <!--判断是否为已选课程-->
+    <select id="judge" parameterType="Student" resultType="Student">
+      select * from student where userid=#{userid} and courseid=#{courseid}
+    </select>
+</mapper> 

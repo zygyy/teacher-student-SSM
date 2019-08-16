@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.dao.TeacherDao">
+    <resultMap id="TeacherResult" type="Teacher">
+        <id property="teacherid" column="teacherid"/>
+        <result property="userid" column="userid"/>
+        <result property="email" column="email"/>
+        <result property="tel" column="tel"/>
+        <result property="courseid" column="courseid"/>
+        <association property="userLogin" javaType="UserLogin">
+            <id property="userid" column="userid"/>
+            <result property="name" column="name"/>
+            <result property="password" column="password"/>
+            <result property="roleid" column="roleid"/>
+        </association>
+        <association property="course" javaType="Course">
+            <id property="courseid" column="courseid"/>
+            <result property="coursename" column="coursename"/>
+        </association>
+    </resultMap>
+
+
+    <!--获取登录的老师的具体信息-->
+    <select id="getTeacherMessage" parameterType="Teacher" resultMap="TeacherResult">
+     select t.teacherid,t.email,t.tel,u.name,c.coursename
+     from userlogin u,teacher t,course c
+     where c.courseid=t.courseid and t.userid=u.userid
+     and  u.userid=#{userid}
+    </select>
+
+    <!--更新教师基本信息-->
+    <update id="updateTeacherMessage" parameterType="Teacher">
+        update teacher
+        <set>
+            <if test="email!=null and email!='' ">
+                email=#{email},
+            </if>
+            <if test="tel!=null and tel!='' ">
+                tel=#{tel},
+            </if>
+        </set>
+        where userid=#{userid}
+    </update>
+
+    <resultMap id="studentResult" type="Student">
+        <id property="studentid" column="studentid"/>
+        <result property="userid" column="userid"/>
+        <result property="tel" column="tel"/>
+        <result property="courseid" column="courseid"/>
+        <result property="teacherid" column="teacherid"/>
+        <result property="score" column="score"/>
+        <association property="userLogin" javaType="UserLogin">
+            <id property="userid" column="userid"/>
+            <result property="name" column="name"/>
+            <result property="password" column="password"/>
+            <result property="roleid" column="roleid"/>
+        </association>
+        <association property="course" javaType="Course">
+            <id property="courseid" column="courseid"/>
+            <result property="coursename" column="coursename"/>
+        </association>
+        <association property="teacher" javaType="Teacher">
+            <id property="teacherid" column="teacherid"/>
+            <result property="userid" column="userid"/>
+            <result property="email" column="email"/>
+            <result property="tel" column="tel"/>
+            <result property="courseid" column="courseid"/>
+        </association>
+    </resultMap>
+
+    <!--查找登录的教师所教的学生的信息-->
+    <select id="teacherGetStudentMessage" parameterType="Map" resultMap="studentResult">
+        select s.studentid,s.tel,s.score,c.coursename,u.name
+        from teacher t,student s,course c,userlogin u
+        where t.teacherid=s.teacherid and s.courseid=c.courseid
+        and s.userid=u.userid and t.teacherid=#{teacherid}
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+    <!--查找登录的教师所教的学生的信息的总的条数-->
+    <select id="teacherGetStudentMessageTotal" parameterType="Map" resultType="Long">
+      select count(*) from( select  s.tel,s.score,c.coursename,u.name
+              from teacher t,student s,course c,userlogin u
+              where t.teacherid=s.teacherid and s.courseid=c.courseid
+              and s.userid=u.userid and  t.teacherid=#{teacherid}) A
+    </select>
+
+
+    <!--教师为学生打分-->
+    <update id="addStudentScore" parameterType="Student">
+        update student
+        <set>
+            <if test="score!=null and score!='' ">
+                score=#{score}
+            </if>
+        </set>
+        where studentid=#{studentid}
+    </update>
+
+
+     <!--导出学生信息到Excel表格-->
+    <select id="excelStudentList" resultMap="studentResult" parameterType="Student">
+        select s.tel,s.score,
+               u.name,
+               c.coursename
+               from student s,userlogin u,course c
+               where s.userid=u.userid and s.courseid=c.courseid
+               and s.studentid=#{studentid}
+    </select>
+
+</mapper> 

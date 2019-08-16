@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.dao.UserLoginDao">
+
+    <resultMap id="UserLoginResult" type="UserLogin">
+        <id property="userid" column="userid"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="roleid" column="roleid"/>
+        <association property="role" javaType="Role">
+            <id property="roleid" column="roleid"/>
+            <result property="rolename" column="rolename"/>
+        </association>
+    </resultMap>
+
+    <!--用户登录-->
+    <select id="login" parameterType="UserLogin" resultMap="UserLoginResult">
+		select u.userid,u.name,u.password,u.roleid,r.rolename from userlogin u,role r where r.roleid=u.roleid and u.name=#{name}  and u.roleid=#{roleid}
+    </select>
+
+    <!--密码的修改-->
+    <update id="updatePassword" parameterType="UserLogin">
+        update userlogin set password=#{password} where userid=#{userid}
+    </update>
+
+   <!--根据userid获取管理员的邮箱-->
+    <select id="getEmailAdmin" parameterType="int" resultType="Admin">
+        select * from admin where userid=#{userid}
+    </select>
+
+    <!--根据userid获取教师的邮箱-->
+    <select id="getEmailTeacher" parameterType="int" resultType="Teacher">
+        select * from teacher where userid=#{userid}
+    </select>
+</mapper> 

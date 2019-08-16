@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zy.dao.AdminDao">
+
+    <resultMap id="AdminResult" type="Admin">
+        <id property="id" column="id"/>
+        <result property="userid" column="userid"/>
+        <result property="email" column="email"/>
+        <result property="tel" column="tel"/>
+        <association property="userLogin" javaType="UserLogin">
+            <id property="userid" column="userid"/>
+            <result property="name" column="name"/>
+            <result property="password" column="password"/>
+            <result property="roleid" column="roleid"/>
+        </association>
+    </resultMap>
+
+    <!--获取登录的管理员的具体信息-->
+    <select id="getAdminMessage" parameterType="Admin" resultMap="AdminResult">
+		select u.userid,u.name,u.password,a.userid,a.email,a.tel from userlogin u,admin a where u.userid=a.userid and u.userid=#{userid}
+    </select>
+
+    <!--修改管理员的详细信息-->
+    <update id="updateAdminMessage" parameterType="Admin">
+        update admin
+        <set>
+            <if test="email!=null and email!='' ">
+                email=#{email},
+            </if>
+            <if test="tel!=null and tel!='' ">
+                tel=#{tel},
+            </if>
+        </set>
+        where userid=#{userid}
+    </update>
+
+
+    <!--管理员查询教师信息-->
+    <select id="findTeacherMessage" parameterType="map" resultMap="teacherResult">
+        select t.teacherid,t.userid,t.email,t.tel,t.courseid,
+        u.userid,u.name,u.password,
+        c.courseid,c.coursename
+        from teacher t,userlogin u,course c
+        <where>
+            t.userid=u.userid and t.courseid=c.courseid
+            <if test="teacherid!=null and teacherid!='' ">
+                and t.teacherid like concat('%',#{teacherid}
+                ,'%')
+            </if>
+        </where>
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+    <!--查询教师总记录条数,根据教师号检索-->
+    <select id="getTeacherMessageTotal" parameterType="Map" resultType="Long">
+        select count(*) from teacher
+        <where>
+            <if test="teacherid!=null and teacherid!='' ">
+                and teacherid like concat('%',#{teacherid}
+                ,'%')
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="teacherResult" type="teacher">
+        <id property="teacherid" column="teacherid"/>
+        <result property="userid" column="userid"/>
+        <result property="email" column="email"/>
+        <result property="tel" column="tel"/>
+        <result property="courseid" column="courseid"/>
+        <association property="userLogin" javaType="UserLogin">
+            <id property="userid" column="userid"/>
+            <result property="name" column="name"/>
+            <result property="password" column="password"/>
+            <result property="roleid" column="roleid"/>
+        </association>
+        <association property="course" javaType="Course">
+            <id property="courseid" column="courseid"/>
+            <result property="coursename" column="coursename"/>
+        </association>
+    </resultMap>
+
+    <!--添加教师登录信息,教师的roleid直接设置为2-->
+    <insert id="addTeacherUserLoginMessage" parameterType="UserLogin">
+      	insert into userLogin values(null,#{name },#{password},2)
+    </insert>
+
+    <!--辅助功能：把教师得userid和name插入userlogin1表-->
+    <insert id="addTeacherIntoUserLogin1" parameterType="UserLogin1">
+        insert into userlogin1 values(#{userid},#{name1})
+    </insert>
+
+    <!--管理员添加教师详细信息-->
+    <insert id="addTeacherSpecificMessage" parameterType="Teacher">
+        insert into teacher values(null,#{userid},#{email},#{tel},#{courseid});
+    </insert>
+
+    <!--判断该课程是否已经分配了教师-->
+    <select id="judgeTeacher" parameterType="int" resultType="Teacher">
+        select * from teacher where courseid=#{courseid}
+    </select>
+
+    <!--获取最后一个用户的Userid-->
+    <select id="getMaxUserid" resultType="int">
+        select max(userid) from userlogin
+    </select>
+
+
+    <resultMap id="studentResult" type="Student">
+        <id property="studentid" column="studentid"/>
+        <result property="userid" column="userid"/>
+        <result property="tel" column="tel"/>
+        <result property="courseid" column="courseid"/>
+        <result property="teacherid" column="teacherid"/>
+        <result property="score" column="score"/>
+        <association property="userLogin" javaType="UserLogin">
+            <id property="userid" column="userid"/>
+            <result property="name" column="name"/>
+            <result property="password" column="password"/>
+            <result property="roleid" column="roleid"/>
+        </association>
+        <association property="course" javaType="Course">
+            <id property="courseid" column="courseid"/>
+            <result property="coursename" column="coursename"/>
+        </association>
+        <association property="teacher" javaType="Teacher">
+            <id property="teacherid" column="teacherid"/>
+            <result property="userid" column="userid"/>
+            <association property="userLogin1" javaType="UserLogin1">
+                <id property="userid" column="userid"/>
+                <result property="name1" column="name1"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <!--获取查询到的相关学生的信息的总条数-->
+    <select id="findStudentMessage" parameterType="Map" resultMap="studentResult">
+        select M.tel,M.score,M.name,M.coursename,M.userid,M.teacherid,N.name1 from userlogin1 as N inner join
+        (select s.tel,s.score,
+        u.name,
+        c.coursename,
+        t.userid,t.teacherid
+        from student s,userlogin u,course c,teacher t
+        where s.userid=u.userid
+        and s.courseid= c.courseid
+        and s.teacherid= t.teacherid)as M
+        on M.userid=N.userid
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+
+    <!--获取学生表信息总的条数-->
+    <select id="getStudentMessageTotal" parameterType="Map" resultType="Long">
+         select count(*) from ( select M.tel,M.score,M.name,M.coursename,M.userid,M.teacherid,N.name1 from userlogin1 as N inner join
+        (select  s.tel,s.score,
+        u.name,
+        c.coursename,
+        t.userid,t.teacherid
+        from student s,userlogin u,course c,teacher t
+        where s.userid=u.userid
+        and  s.courseid= c.courseid
+        and s.teacherid= t.teacherid)as M
+        on M.userid=N.userid) A
+    </select>
+
+    <!--管理员为学生添加登录信息，设置roleid为3-->
+    <insert id="addStudentUserLoginMessage" parameterType="UserLogin">
+      insert into userLogin values(null,#{name },#{password},3)
+    </insert>
+
+    <!--管理员录入学生的详细信息，默认未添加课程，因此没有老师和分数，都设置为：0-->
+    <insert id="addStudentSpecificMessage" parameterType="Student">
+         insert into student values(null,#{userid},#{tel},0,0,0)
+    </insert>
+
+</mapper>
+

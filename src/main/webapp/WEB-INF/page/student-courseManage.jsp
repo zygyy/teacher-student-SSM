@@ -63,7 +63,6 @@
        toolbar="#tb">
     <thead>
     <tr>
-        <%--<th field="cb" checkbox="true" align="center"></th>--%>
         <th hidden="hidden" field="courseid" align="center">课程号</th>
         <th field="coursename" width="50" align="center">课程</th>
         <th field="comment" width="50" align="center">课程介绍</th>

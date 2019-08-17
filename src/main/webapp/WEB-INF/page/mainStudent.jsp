@@ -60,10 +60,10 @@
 <div region="west" style="width: 200px" title="导航菜单" split="true">
     <div class="easyui-accordion" data-options="fit:true,border:false">
         <div title="课程管理"  data-options="iconCls:'icon-khgl'" style="padding:10px;">
-            <a href="javascript:openTab('课程管理','student-courseManage?userid=${currentUser.userid }','icon-khxxgl')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-khxxgl'" style="width: 150px;">课程管理</a>
+            <a href="javascript:openTab('课程管理','student-courseManage/${currentUser.userid }','icon-khxxgl')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-khxxgl'" style="width: 150px;">课程管理</a>
         </div>
         <div title="系统管理"  data-options="iconCls:'icon-item'" style="padding:10px">
-            <a href="javascript:openTab('个人信息管理','studentManage?userid=${currentUser.userid }','icon-khxxgl')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-fwgd'" style="width: 150px;">个人信息管理</a>
+            <a href="javascript:openTab('个人信息管理','studentManage/${currentUser.userid }','icon-khxxgl')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-fwgd'" style="width: 150px;">个人信息管理</a>
             <a href="${pageContext.request.contextPath}/user/logout" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-exit'" style="width: 150px;">安全退出</a>
         </div>
     </div>

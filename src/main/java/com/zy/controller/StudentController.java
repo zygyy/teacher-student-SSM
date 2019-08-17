@@ -9,7 +9,9 @@ import com.zy.util.ResponseUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
@@ -38,10 +40,10 @@ public class StudentController {
      * @return
      */
 
-    @RequestMapping("/studentManage")
-    public String tip(HttpServletRequest request) {
+    @RequestMapping(value = "/studentManage/{userid}",method = RequestMethod.GET)
+    public String tip(@PathVariable String  userid, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.setAttribute("currentStudentUserid", request.getParameter("userid"));
+        session.setAttribute("currentStudentUserid", userid);
         return "studentManage";
     }
 
@@ -51,10 +53,10 @@ public class StudentController {
      * @param request
      * @return
      */
-    @RequestMapping("/student-courseManage")
-    public String skip(HttpServletRequest request) {
+    @RequestMapping(value = "/student-courseManage/{userid}",method = RequestMethod.GET)
+    public String skip(@PathVariable String  userid,HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.setAttribute("currentStudentUserid", request.getParameter("userid"));
+        session.setAttribute("currentStudentUserid", userid);
         return "student-courseManage";
     }
 
@@ -70,11 +72,11 @@ public class StudentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/studentGetPersonalMessage")
-    public String studentGetPersonalMessage(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Student student, HttpServletResponse response, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/studentGetPersonalMessage/{userid}",method = RequestMethod.POST)
+    public String studentGetPersonalMessage(@PathVariable int  userid,@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Student student, HttpServletResponse response, HttpServletRequest request) throws Exception {
         PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("userid", request.getParameter("userid"));
+        map.put("userid", userid);
         map.put("start", pageBean.getStart());
         map.put("size", pageBean.getPagesize());
         List<Student> studentList = studentService.studentGetPersonalMessage(map);
@@ -102,7 +104,7 @@ public class StudentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/chooseCourseList")
+    @RequestMapping(value = "/chooseCourseList",method = RequestMethod.POST)
     public String chooseCourse(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Course course, HttpServletResponse response) throws Exception {
         PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -128,7 +130,7 @@ public class StudentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/selectCourse")
+    @RequestMapping(value = "/selectCourse",method = RequestMethod.POST)
     public String selectCourse(Student student, HttpServletRequest request, HttpServletResponse response) throws Exception {
         //获取电话号码（tel）
         List<Student> resultStudentTel = studentService.selectTel(student.getUserid());

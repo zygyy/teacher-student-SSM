@@ -38,11 +38,13 @@
             $("#modifyPassword").dialog("open").dialog("setTitle", "修改密码");
         }
 
+
         /*获取验证码按钮，直接传请求*/
+        /*RESTful风格请求直接带参数*/
         function achieveCode() {
             $.ajax({
-                type: "post",
-                url: "${pageContext.request.contextPath}/user/getAchieveCode?userid=${currentUserid}",
+                type: "get",
+                url: "${pageContext.request.contextPath}/user/getAchieveCode/${currentUserid}",
                 dataType: "json",
                 success: function (result) {
                     if (result.success) {
@@ -59,12 +61,10 @@
             var code = $("#code").val();
             $.ajax({
                 type: "post",
-                url: "${pageContext.request.contextPath}/user/updatePasswordAdminAndTeacher?userid=${currentUserid}",
+                url: "${pageContext.request.contextPath}/user/updatePasswordAdminAndTeacher/${currentUserid}/"+passwordqueren+"/"+code,
                 dataType: "json",
                 data: {
                     "password": password,
-                    "passwordqueren": passwordqueren,
-                    "code": code,
                 },
                 success: function (result) {
                     if (result.success) {
@@ -138,7 +138,7 @@
 </head>
 <body style="margin: 1px">
 <table id="dg" title="管理员个人信息管理" class="easyui-datagrid"
-       url="${pageContext.request.contextPath}/admin/adminMessageList?userid=${currentUserid}" fit="true" toolbar="#tb">
+       url="${pageContext.request.contextPath}/admin/adminMessageList/${currentUserid}" fit="true" toolbar="#tb">
     <thead>
     <tr>
         <th field="userid" width="400" align="center">用户ID</th>

@@ -6,8 +6,7 @@ import com.zy.util.ResponseUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -53,15 +52,15 @@ public class AdminController {
 
     /**
      * 跳转管理员个人页面
-     *
+     * @param userid
      * @param request
      * @return
      */
-    @RequestMapping("/adminManage")
-    public String adminManage(HttpServletRequest request) {
+    @RequestMapping(value = "/adminManage/{userid}",method = RequestMethod.GET)
+    public String adminManage(@PathVariable String userid,HttpServletRequest request) {
         HttpSession session = request.getSession();
         /*获取请求传过来的userid，并传入下一个界面*/
-        session.setAttribute("currentUserid", request.getParameter("userid"));
+        session.setAttribute("currentUserid", userid);
         return "adminManage";
     }
 
@@ -74,11 +73,10 @@ public class AdminController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/adminMessageList")
-    public String login(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String userid = request.getParameter("userid");
+    @RequestMapping(value = "/adminMessageList/{userid}",method = RequestMethod.POST)
+    public String login(@PathVariable int  userid,HttpServletRequest request, HttpServletResponse response) throws Exception {
         Admin admin = new Admin();
-        admin.setUserid(Integer.parseInt(userid));
+        admin.setUserid(userid);
         List<Admin> adminMessage = adminService.getAdminMessage(admin);
         /*将查询到的数据封装为JSON格式返回前端,前端只需要对应属性名称即可获取值
          * 如果是嵌套的JSON，前端需要解析(也可以在后端先取值，再次塞到JSON中，前端filed对应属性)
@@ -98,7 +96,7 @@ public class AdminController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/updateAdminMessage")
+    @RequestMapping(value = "/updateAdminMessage", method = RequestMethod.POST)
     public String save(Admin admin, HttpServletRequest request, HttpServletResponse response) throws Exception {
         int resultTotal = 0; // 操作的记录条数
         resultTotal = adminService.updateAdminMessage(admin);
@@ -123,7 +121,7 @@ public class AdminController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/adminGetTeacherMessage")
+    @RequestMapping(value = "/adminGetTeacherMessage",method = RequestMethod.POST)
     /*@RequestParam可以对传入参数指定参数名*/
     public String getTeacherMessageList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Teacher teacher, HttpServletResponse response) throws Exception {
         /*获取页码和每页记录，页面可以修改*/
@@ -160,11 +158,11 @@ public class AdminController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/addTeacherMessage ")
+    @RequestMapping(value = "/addTeacherMessage ", method = RequestMethod.POST)
     public String addTeacherLoginMessage(UserLogin userLogin, UserLogin1 userLogin1, Teacher teacher, HttpServletResponse response) throws Exception {
         JSONObject result = new JSONObject();
         /*判断该课程是否已经分配了教师*/
-        if(adminService.judgeTeacher(teacher.getCourseid())==null){
+        if (adminService.judgeTeacher(teacher.getCourseid()) == null) {
             int resultLoginTotal = adminService.addTeacherUserLoginMessage(userLogin);
             teacher.setUserid(adminService.getMaxUserid());//先添加userlogin表,在获取其userid,给teacher表的userid设置值
 
@@ -178,7 +176,7 @@ public class AdminController {
             }
             ResponseUtil.write(response, result);
             return null;
-        }else{
+        } else {
             result.put("success", false);
             ResponseUtil.write(response, result);
             return null;
@@ -195,12 +193,11 @@ public class AdminController {
      * @param student
      * @param response
      * @return
-     * @throws Exception
-     * NetWork中的header中传过来page和rows
-     * page: 1
-     * rows: 10
+     * @throws Exception NetWork中的header中传过来page和rows
+     *                   page: 1
+     *                   rows: 10
      */
-    @RequestMapping("/adminGetStudentMessage")
+    @RequestMapping(value = "/adminGetStudentMessage",method = RequestMethod.POST)
     public String adminGetStudentMessage(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Student student, HttpServletResponse response) throws Exception {
         PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
         Map<String, Object> map = new HashMap<String, Object>();
@@ -231,7 +228,7 @@ public class AdminController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/addStudentMessage ")
+    @RequestMapping(value = "/addStudentMessage ", method = RequestMethod.POST)
     public String addStudentMessage(UserLogin userLogin, Student student, HttpServletResponse response) throws Exception {
         student.setUserid(adminService.getMaxUserid() + 1);
         int resultUserLoginTotal = adminService.addStudentUserLoginMessage(userLogin);

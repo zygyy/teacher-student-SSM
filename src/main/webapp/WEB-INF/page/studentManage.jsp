@@ -35,11 +35,10 @@
             var passwordqueren = $("#passwordensure").val();
             $.ajax({
                 type: "post",
-                url: "${pageContext.request.contextPath}/user/updatePassword?userid=${currentStudentUserid}",
+                url: "${pageContext.request.contextPath}/user/updatePassword/${currentStudentUserid}/"+passwordqueren,
                 dataType: "json",
                 data: {
                     "password": password,
-                    "passwordqueren": passwordqueren,
                 },
                 success: function (result) {
                     if (result.success) {
@@ -66,7 +65,7 @@
 <body>
 <table id="dg" title="学生管理" class="easyui-datagrid"
        fitColumns="true" pagination="true" rownumbers="true"
-       url="${pageContext.request.contextPath}/student/studentGetPersonalMessage?userid=${currentStudentUserid}"
+       url="${pageContext.request.contextPath}/student/studentGetPersonalMessage/${currentStudentUserid}"
        fit="true"
        toolbar="#tb">
     <thead>

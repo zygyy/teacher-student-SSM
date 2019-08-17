@@ -12,7 +12,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
@@ -51,30 +53,30 @@ public class TeacherController {
 
     /**
      * 跳转教师个人信息界面
-     *
+     * @param userid
      * @param request
      * @return
      */
-    @RequestMapping("teacherManage")
-    public String skipTeacherManage(HttpServletRequest request) {
+    @RequestMapping(value = "/teacherManage/{userid}",method = RequestMethod.GET)
+    public String skipTeacherManage(@PathVariable String  userid,HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.setAttribute("currentUserid", request.getParameter("userid"));
+        session.setAttribute("currentUserid", userid);
         return "teacherManage";
     }
 
 
     /**
      * 教师个人信息查看
-     *
+     *@param userid
      * @param request
      * @param response
      * @return
      * @throws Exception
      */
-    @RequestMapping("/teacherMessageList")
-    public String teacherMessageList(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/teacherMessageList/{userid}",method = RequestMethod.POST)
+    public String teacherMessageList(@PathVariable int  userid,HttpServletRequest request, HttpServletResponse response) throws Exception {
         Teacher teacher = new Teacher();
-        teacher.setUserid(Integer.parseInt(request.getParameter("userid")));
+        teacher.setUserid(userid);
         List<Teacher> teacherListResult = teacherService.getTeacherMessage(teacher);
         for (Teacher t : teacherListResult) {
             t.setCoursename(t.getCourse().getCoursename());
@@ -92,7 +94,7 @@ public class TeacherController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/updateTeacherMessage")
+    @RequestMapping(value = "/updateTeacherMessage",method =RequestMethod.POST)
     public String updateTeacherMessage(Teacher teacher, HttpServletResponse response) throws Exception {
         int resultNum = teacherService.updateTeacherMessage(teacher);
         JSONObject jsonObject = new JSONObject();
@@ -117,11 +119,11 @@ public class TeacherController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/teacherGetStudentMessage")
-    public String adminGetStudentMessage(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Student student, HttpServletResponse response, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/teacherGetStudentMessage/{userid}",method = RequestMethod.POST)
+    public String adminGetStudentMessage(@PathVariable int  userid,@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Student student, HttpServletResponse response, HttpServletRequest request) throws Exception {
         //根据传过来的登录的userid，获得相关老师的teacherid
         Teacher teacher = new Teacher();
-        teacher.setUserid(Integer.parseInt(request.getParameter("userid")));
+        teacher.setUserid(userid);
         List<Teacher> teacherListResult = teacherService.getTeacherMessage(teacher);
         Map<String, Object> map = new HashMap<String, Object>();
         for (Teacher t : teacherListResult) {
@@ -154,7 +156,7 @@ public class TeacherController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/addStudentScore")
+    @RequestMapping(value = "/addStudentScore",method = RequestMethod.POST)
     public String addStudentScore(Student student, HttpServletResponse response) throws Exception {
         JSONObject jsonObject = new JSONObject();
         if (student.getScore() <= 100 && student.getScore() >= 0) {
@@ -183,7 +185,7 @@ public class TeacherController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/teacherExcel")
+    @RequestMapping(value = "/teacherExcel",method = RequestMethod.POST)
     public String teacherExcel(@RequestParam(value = "excelIds") String excelIds, Student student, HttpServletResponse response) throws Exception {
         String[] excelMessage = excelIds.split(",");
 

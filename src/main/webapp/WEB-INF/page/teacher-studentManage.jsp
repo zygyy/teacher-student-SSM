@@ -94,7 +94,7 @@
 <body>
 <table id="dg" title="学生管理" class="easyui-datagrid"
        fitColumns="true" pagination="true" rownumbers="true"
-       url="${pageContext.request.contextPath}/teacher/teacherGetStudentMessage?userid=${currentUserid}" fit="true"
+       url="${pageContext.request.contextPath}/teacher/teacherGetStudentMessage/${currentUserid}" fit="true"
        toolbar="#tb">
     <thead>
     <tr>

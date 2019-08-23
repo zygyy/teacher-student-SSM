@@ -20,9 +20,6 @@ public class Mail {
     // 网易163邮箱的 SMTP 服务器地址为: smtp.163.com
     public static String myEmailSMTPHost = "smtp.163.com";//注意修改为163邮箱
 
-    // 收件人邮箱（替换为自己知道的有效邮箱）
-    //public static String receiveMailAccount = "1297799065@qq.com";
-    //public static String receiveMailAccount;
 
     /**
      * 创建一封只包含文本的简单邮件
@@ -41,12 +38,10 @@ public class Mail {
         message.setFrom(new InternetAddress(sendMail, "zy1297799065@163.com", "UTF-8"));
 
         // 3. To: 收件人（可以增加多个收件人、抄送、密送）
-        //message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiveMail, "1297799065@qq.com", "UTF-8"));
         message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiveMail, receiveMail, "UTF-8"));
 
         // 4. Subject: 邮件主题
         message.setSubject("修改密码——发送邮件", "UTF-8");
-
 
         // 5. Content: 邮件正文（可以使用html标签）
         message.setContent("验证码为："+randomArise, "text/html;charset=UTF-8");
@@ -59,14 +54,17 @@ public class Mail {
         return message;
     }
 
-
-
+    /**
+     *
+     * @param receiveMailAccount  获取的邮箱
+     * @param randomArise         生成的随机数
+     * @throws Exception
+     */
     public void sendMail(String receiveMailAccount,int randomArise)throws Exception{
         Properties properties=new Properties();//参数配置
         properties.setProperty("mail.transport.protocol", "smtp");   // 使用的协议（JavaMail规范要求）
         properties.setProperty("mail.smtp.host", myEmailSMTPHost);   // 发件人的邮箱的 SMTP 服务器地址
         properties.setProperty("mail.smtp.auth", "true");            // 需要请求认证
-
 
         final String smtpPort = "465";
         properties.setProperty("mail.smtp.port", smtpPort);
@@ -90,7 +88,5 @@ public class Mail {
         // 7. 关闭连接
         transport.close();
     }
-
-
 }
 

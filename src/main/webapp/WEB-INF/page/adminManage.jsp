@@ -61,7 +61,7 @@
             var code = $("#code").val();
             $.ajax({
                 type: "post",
-                url: "${pageContext.request.contextPath}/user/updatePasswordAdminAndTeacher/${currentUserid}/"+passwordqueren+"/"+code,
+                url: "${pageContext.request.contextPath}/user/updatePasswordAdminAndTeacher/${currentUserid}/" + passwordqueren + "/" + code,
                 dataType: "json",
                 data: {
                     "password": password,

@@ -131,7 +131,7 @@ public class UserLoginController {
 
 
     /**
-     * 修改登录密码（管理员,教师调用此方法）
+     * 发送邮件（管理员,教师调用此方法）
      * @param userid
      * @param request
      * @param response
@@ -139,13 +139,13 @@ public class UserLoginController {
      * @throws Exception
      */
     @RequestMapping(value = "/getAchieveCode/{userid}",method = RequestMethod.GET)
-    public String getAchieveCode(@PathVariable int  userid,HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String getAchieveCode(@PathVariable int  userid,
+    HttpServletRequest request, HttpServletResponse response) throws Exception {
         Mail mail=new Mail();
         /*生成随机码*/
         Random random=new Random();
         int  randomArise=random.randomArise();
         map.put("key",randomArise);//将随机码存放到map里面
-
         /*只设置了一个管理员,所以只判断了userid是否为1,是1则为管理员登录,调用管理员的方法;不为1,则调用教师方法*/
         if(userid==1){
             Admin admin=userLoginService.getEmailAdmin(userid);

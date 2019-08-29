@@ -62,7 +62,8 @@
     <div class="easyui-accordion" data-options="fit:true,border:false">
         <div title="学生管理"  data-options="iconCls:'icon-khgl'" style="padding:10px;">
             <a href="javascript:openTab('学生信息管理','admin-studentManage','icon-khxxgl')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-khxxgl'" style="width: 150px;">学生信息管理</a>
-         </div>
+            <a href="javascript:openTab('选课统计','admin-studentChooseCourse','icon-khxxgl')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-khxxgl'" style="width: 150px;">学生选课统计</a>
+        </div>
         <div title="教师管理" data-options="iconCls:'icon-fwgl'" style="padding:10px">
             <a href="javascript:openTab('教师信息管理','admin-teacherManage','icon-khxxgl')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-fwgd'" style="width: 150px;">教师信息管理</a>
         </div>

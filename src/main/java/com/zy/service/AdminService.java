@@ -109,4 +109,10 @@ public interface AdminService {
     public int addStudentSpecificMessage(Student student);
 
 
+    /**
+     * 选课统计
+     *
+     * @return
+     */
+    public List<Student> chooseCourseTotal();
 }

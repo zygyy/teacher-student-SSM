@@ -117,6 +117,7 @@
         <result property="courseid" column="courseid"/>
         <result property="teacherid" column="teacherid"/>
         <result property="score" column="score"/>
+        <result property="total" column="count(*)"/>
         <association property="userLogin" javaType="UserLogin">
             <id property="userid" column="userid"/>
             <result property="name" column="name"/>
@@ -177,6 +178,11 @@
     <insert id="addStudentSpecificMessage" parameterType="Student">
          insert into student values(null,#{userid},#{tel},0,0,0)
     </insert>
+
+    <!--统计每门课的选课人数-->
+    <select id="chooseCourseTotal" resultMap="studentResult" >
+        select c.coursename,count(*)  from student s,course c where c.courseid=s.courseid GROUP BY s.courseid
+    </select>
 
 </mapper>
 

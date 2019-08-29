@@ -146,4 +146,13 @@ public class AdminServiceImpl implements AdminService {
         return adminDao.addStudentSpecificMessage(student);
     }
 
+
+    /**
+     * 选课统计
+     *
+     * @return
+     */
+    public List<Student> chooseCourseTotal(){
+        return adminDao.chooseCourseTotal();
+    }
 }

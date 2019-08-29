@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +41,16 @@ public class AdminController {
     }
 
     /**
+     * 跳转学生课程统计
+     *
+     * @return
+     */
+    @RequestMapping("/admin-studentChooseCourse")
+    public String studentCourseTotal() {
+        return "admin-studentChooseCourse";
+    }
+
+    /**
      * 跳转学生信息管理界面
      *
      * @return
@@ -52,12 +63,13 @@ public class AdminController {
 
     /**
      * 跳转管理员个人页面
+     *
      * @param userid
      * @param request
      * @return
      */
-    @RequestMapping(value = "/adminManage/{userid}",method = RequestMethod.GET)
-    public String adminManage(@PathVariable String userid,HttpServletRequest request) {
+    @RequestMapping(value = "/adminManage/{userid}", method = RequestMethod.GET)
+    public String adminManage(@PathVariable String userid, HttpServletRequest request) {
         HttpSession session = request.getSession();
         /*获取请求传过来的userid，并传入下一个界面*/
         session.setAttribute("currentUserid", userid);
@@ -73,8 +85,8 @@ public class AdminController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/adminMessageList/{userid}",method = RequestMethod.POST)
-    public String login(@PathVariable int  userid,HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/adminMessageList/{userid}", method = RequestMethod.POST)
+    public String login(@PathVariable int userid, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Admin admin = new Admin();
         admin.setUserid(userid);
         List<Admin> adminMessage = adminService.getAdminMessage(admin);
@@ -121,7 +133,7 @@ public class AdminController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/adminGetTeacherMessage",method = RequestMethod.POST)
+    @RequestMapping(value = "/adminGetTeacherMessage", method = RequestMethod.POST)
     /*@RequestParam可以对传入参数指定参数名*/
     public String getTeacherMessageList(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Teacher teacher, HttpServletResponse response) throws Exception {
         /*获取页码和每页记录，页面可以修改*/
@@ -197,7 +209,7 @@ public class AdminController {
      *                   page: 1
      *                   rows: 10
      */
-    @RequestMapping(value = "/adminGetStudentMessage",method = RequestMethod.POST)
+    @RequestMapping(value = "/adminGetStudentMessage", method = RequestMethod.POST)
     public String adminGetStudentMessage(@RequestParam(value = "page", required = false) String page, @RequestParam(value = "rows", required = false) String rows, Student student, HttpServletResponse response) throws Exception {
         PageBean pageBean = new PageBean(Integer.parseInt(page), Integer.parseInt(rows));
         Map<String, Object> map = new HashMap<String, Object>();
@@ -241,6 +253,24 @@ public class AdminController {
         }
         ResponseUtil.write(response, result);
         return null;
+    }
+
+    /**
+     * 统计选课人数
+     *
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping("/courseNumber")
+    public Result courseNum(HttpServletResponse response) throws Exception {
+        List<Student> studentChooseCourseList = adminService.chooseCourseTotal();
+        for (Student s : studentChooseCourseList) {
+            s.setCoursename(s.getCourse().getCoursename());
+            System.out.println(s);
+        }
+        return new Result(studentChooseCourseList);
     }
 
 }

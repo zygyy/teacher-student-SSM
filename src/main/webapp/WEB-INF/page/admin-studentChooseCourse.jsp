@@ -1,0 +1,85 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: 周宇
+  Date: 2019/8/29
+  Time: 10:17
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css"
+          href="${pageContext.request.contextPath}/jquery-easyui-1.3.3/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css"
+          href="${pageContext.request.contextPath}/jquery-easyui-1.3.3/themes/icon.css">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="${pageContext.request.contextPath}/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script>
+
+</head>
+<body style="margin: 1px">
+<!-- 为ECharts准备一个具备大小（宽高）的DOM-->
+<div id="main" style="width: 100%;height:90%;"></div>
+<div id="ployLine" style="width: 100%;height:90%;"></div>
+</body>
+<script type="text/javascript">
+    window.onload = function () {
+        getData();
+    };
+
+   /* 基于准备好的dom，初始化echarts实例*/
+    var myChart = echarts.init(document.getElementById('main'));
+    var ployLine = echarts.init(document.getElementById('ployLine'));
+    var courseName = [];
+    var num = [];
+    // 指定图表的配置项和数据
+    ployLine.setOption({
+        title: {
+            text: '学生选课情况折线图统计'
+        },
+        tooltip: {},
+        legend: {
+            data:['']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {},
+        series: [{
+            type: 'bar',
+            data: []
+        }]
+    });
+
+
+    function getData() {
+        $.ajax({
+            url:"${pageContext.request.contextPath}/admin/courseNumber",
+            type:'post',
+            dataType: 'json',
+            header:{'Content-Type': 'application/json'},
+            success:function (result) {
+                console.info(result);
+/*
+                for (var key in result) {
+                    coursename.push(key);
+                    total.push(result[key])
+                }
+
+                // 填入数据
+                ployLine.setOption({
+                    xAxis: {
+                        data: coursename
+                    },
+                    series: [{
+                        // 根据名字对应到相应的系列
+                        data: total
+                    }]
+                });
+                return result;*/
+            }
+        })
+    }
+</script>
+</html>

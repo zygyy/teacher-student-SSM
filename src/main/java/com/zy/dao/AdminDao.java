@@ -106,5 +106,11 @@ public interface AdminDao {
      */
     public int addStudentSpecificMessage(Student studnet);
 
+    /**
+     * 选课统计
+     *
+     * @return
+     */
+    public List<Student> chooseCourseTotal();
 
 }

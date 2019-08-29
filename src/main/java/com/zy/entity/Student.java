@@ -4,7 +4,7 @@ package com.zy.entity;
  * @author 周宇
  * @university ycit.com
  * @creat 2019/8/8 16:57
- *
+ * <p>
  * 学生实体类
  */
 public class Student {
@@ -17,6 +17,8 @@ public class Student {
     private int teacherid;
     private Teacher teacher;
     private int score;
+
+    private int total;
 
     /*重新塞值*/
     private String studentname;//学生姓名
@@ -95,6 +97,14 @@ public class Student {
         this.score = score;
     }
 
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
@@ -107,11 +117,12 @@ public class Student {
                 ", teacherid=" + teacherid +
                 ", teacher=" + teacher +
                 ", score=" + score +
+                ", total=" + total +
                 '}';
     }
 
 
-public String getStudentname() {
+    public String getStudentname() {
         return studentname;
     }
 

@@ -20,7 +20,6 @@
 </head>
 <body style="margin: 1px">
 <!-- 为ECharts准备一个具备大小（宽高）的DOM-->
-<div id="main" style="width: 100%;height:90%;"></div>
 <div id="ployLine" style="width: 100%;height:90%;"></div>
 </body>
 <script type="text/javascript">
@@ -28,8 +27,7 @@
         getData();
     };
 
-   /* 基于准备好的dom，初始化echarts实例*/
-    var myChart = echarts.init(document.getElementById('main'));
+    /* 基于准备好的dom，初始化echarts实例*/
     var ployLine = echarts.init(document.getElementById('ployLine'));
     var courseName = [];
     var num = [];
@@ -40,7 +38,7 @@
         },
         tooltip: {},
         legend: {
-            data:['']
+            data: ['']
         },
         xAxis: {
             data: []
@@ -55,29 +53,29 @@
 
     function getData() {
         $.ajax({
-            url:"${pageContext.request.contextPath}/admin/courseNumber",
-            type:'post',
+            url: "${pageContext.request.contextPath}/admin/courseNumber",
+            type: 'post',
             dataType: 'json',
-            header:{'Content-Type': 'application/json'},
-            success:function (result) {
-                console.info(result);
-/*
-                for (var key in result) {
-                    coursename.push(key);
-                    total.push(result[key])
+            header: {'Content-Type': 'application/json'},
+            success: function (result) {
+                for (var i in result.data) {
+                    courseName.push(result.data[i].coursename);
+                    num.push(result.data[i].total)
                 }
+                console.info(courseName)
+                console.info(num)
 
-                // 填入数据
+                /*  填入数据*/
                 ployLine.setOption({
                     xAxis: {
-                        data: coursename
+                        data: courseName
                     },
                     series: [{
                         // 根据名字对应到相应的系列
-                        data: total
+                        data: num
                     }]
                 });
-                return result;*/
+                return result;
             }
         })
     }

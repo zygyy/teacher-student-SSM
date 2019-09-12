@@ -34,7 +34,7 @@
     // 指定图表的配置项和数据
     ployLine.setOption({
         title: {
-            text: '学生选课情况折线图统计'
+            text: '学生选课情况条形图统计'
         },
         tooltip: {},
         legend: {
@@ -62,8 +62,6 @@
                     courseName.push(result.data[i].coursename);
                     num.push(result.data[i].total)
                 }
-                console.info(courseName)
-                console.info(num)
 
                 /*  填入数据*/
                 ployLine.setOption({
